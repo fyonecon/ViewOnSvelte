@@ -10,6 +10,12 @@ env:
   CACHE_MAX_AGE: "360000"  # 100小时
   BUILD_DIR: "dist"
 
+# 添加权限配置
+permissions:
+  contents: write  # 必需：允许写入内容
+  pages: write     # 如果需要 GitHub Pages
+  id-token: write  # 如果需要 OIDC
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
