@@ -5,12 +5,12 @@ import {csr} from "./routes/+page.js";
 const config = {
     debug: false, // true、false
     app: {
-        app_name: "Ginthon",
-        app_class: "ginthon_sv_", // ginthon_sv_ 、waigo_sv_
+        app_name: "View",
+        app_class: "View_sv_", // ginthon_sv_ 、waigo_sv_
         app_version: "1.6.5", // 1.0.0
     },
     sys:{
-        backend: "py", // go、py
+        backend: "JS", // go、py
         base_route: "", // 等同于svelte.config.js中paths的base  "", "/view"，结尾无/
         home_route: "/home", // 主页默认页的路由 ""、"/home"
     },
