@@ -8,7 +8,7 @@ on:
 env:
   NODE_VERSION: "20"
   CACHE_MAX_AGE: "360000"  # 100小时
-  BUILD_DIR: "dist"
+  BUILD_DIR: "./dist"
 
 # 添加权限配置
 permissions:
@@ -36,15 +36,15 @@ jobs:
       - name: 🏗️ Build project
         run: npm run build
 
-      - name: 🔧 Fix SvelteKit paths
-        run: |
-          cd ${{ env.BUILD_DIR }}
-          touch .nojekyll
-          if [ -f "index.html" ]; then
-            sed -i 's|/_app/|./_app/|g' index.html
-            sed -i 's|src="/|src="./|g' index.html
-            sed -i 's|href="/|href="./|g' index.html
-          fi
+#      - name: 🔧 Fix SvelteKit paths
+#        run: |
+#          cd ${{ env.BUILD_DIR }}
+#          touch .nojekyll
+#          if [ -f "index.html" ]; then
+#            sed -i 's|/_app/|./_app/|g' index.html
+#            sed -i 's|src="/|src="./|g' index.html
+#            sed -i 's|href="/|href="./|g' index.html
+#          fi
 
       - name: 🚀 Deploy
         uses: peaceiris/actions-gh-pages@v3
