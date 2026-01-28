@@ -25,7 +25,7 @@ jobs:
           cache: 'npm'  # 改为 npm 缓存
 
       - name: 📦 Install dependencies
-        run: npm ci  # 推荐使用 npm ci，它比 npm install 更快更可靠
+        run: npm install  # 推荐使用 npm ci，它比 npm install 更快更可靠
 
       - name: 🏗️ Build project
         run: npm run build  # 改为 npm run build
