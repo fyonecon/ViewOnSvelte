@@ -29,18 +29,18 @@ server: {
 
 项目所在文件夹：/frontend/view/svelte/
 ```
-pnpm install
+npm install
 
-pnpm run dev
+npm run dev
 
-pnpm run build
+npm run build
 ```
 
 ### Svelte打包静态网站：
 静态网站请参考：
 https://svelte.dev/docs/kit/adapters
 ```
-pnpm i -D @sveltejs/adapter-static
+npm i -D @sveltejs/adapter-static
 ```
 在/frontend/view/svelte/svelte.config.js添加如下内容:
 ```
