@@ -6,7 +6,6 @@ on:
     branches: [main]
 
 env:
-  PNPM_VERSION: "8"
   NODE_VERSION: "20"
   CACHE_MAX_AGE: "360000"  # 100小时
   BUILD_DIR: "dist"
@@ -16,29 +15,52 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout
+      - name: 📥 Checkout code
         uses: actions/checkout@v4
-
-      - name: 🐢 Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: ${{ env.PNPM_VERSION }}
-          run_install: false
 
       - name: ⎔ Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: 'npm'  # 改为 npm 缓存
 
       - name: 📦 Install dependencies
-        run: pnpm install
+        run: npm ci  # 推荐使用 npm ci，它比 npm install 更快更可靠
 
-      - name: 🏗️ Build
-        run: pnpm build
+      - name: 🏗️ Build project
+        run: npm run build  # 改为 npm run build
 
-      - name: 🚀 Deploy
+      - name: 🔧 Fix SvelteKit paths
+        run: |
+          cd ${{ env.BUILD_DIR }}
+          
+          # 创建 .nojekyll 文件（防止 GitHub Pages 忽略下划线开头的文件）
+          touch .nojekyll
+          
+          # 修复 SvelteKit 路径问题
+          if [ -f "index.html" ]; then
+            echo "修复 index.html 中的路径..."
+            sed -i 's|/_app/|./_app/|g' index.html
+            sed -i 's|src="/|src="./|g' index.html
+            sed -i 's|href="/|href="./|g' index.html
+          fi
+          
+          # 设置缓存头（可选）
+          echo "设置缓存头..."
+          for file in $(find . -type f \( -name "*.js" -o -name "*.css" -o -name "*.mjs" \)); do
+            echo "public, max-age=${{ env.CACHE_MAX_AGE }}, immutable" > "${file}.headers"
+          done
+
+      - name: 🚀 Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ${{ env.BUILD_DIR }}
+          keep_files: false  # 部署前清理目标分支
+          force_orphan: true  # 强制清空历史，只保留当前部署
+          commit_message: |
+            🚀 Deploy SvelteKit App
+            • Commit: ${{ github.sha }}
+            • Date: $(date +'%Y-%m-%d %H:%M:%S')
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
