@@ -11,7 +11,7 @@ const config = {
     },
     sys:{
         backend: "py", // go、py
-        base_route: "/dist", // 等同于svelte.config.js中paths的base  "", "/view"，结尾无/
+        base_route: "", // 等同于svelte.config.js中paths的base  "", "/view"，结尾无/
         home_route: "/home", // 主页默认页的路由 ""、"/home"
     },
     api: {
