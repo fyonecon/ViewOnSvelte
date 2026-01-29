@@ -185,31 +185,6 @@ html {
     border-radius: 10px;
 }
 
-
-.ul-group{
-    clear: both;
-    margin-bottom: 20px;
-}
-.li-group{
-    clear: both;
-    overflow: hidden;
-    margin-bottom: 10px;
-}
-.li-group-title{
-    width: 200px;
-    padding: 10px 10px;
-    float: left;
-    opacity: 0.8;
-    line-height: 24px;
-    overflow: hidden;
-    max-height: 82px;
-}
-.li-group-content{
-    width: calc(100% - 200px);
-    padding: 10px 10px;
-    float: left;
-}
-
 .svg-icon{
     float: left;
     margin-right: 8px;

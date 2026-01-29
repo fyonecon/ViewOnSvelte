@@ -2,7 +2,7 @@
     /*根路由*/
 
     import func from "../common/func.svelte.js";
-    import config from "../config.js";
+    import config from "../config";
 
     //
     function go_home(){

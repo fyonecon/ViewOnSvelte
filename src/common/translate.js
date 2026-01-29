@@ -74,13 +74,17 @@ const lang_dict = {
         en: "Themes",
     },
     //
-    ITHome: {
-        zh: "爬IT之家",
-        en: "Spider ITHome",
+    Search: {
+        zh: "🔍 搜索",
+        en: "🔍 Search",
     },
-    PlayAudio: {
-        zh: "播放音频",
-        en: "Play Audio",
+    Info: {
+        zh: "查看信息",
+        en: "See info",
+    },
+    url_timeout: {
+        zh: "链接过期",
+        en: "URL Timeout",
     },
     //
     reload_window: {
@@ -209,6 +213,10 @@ const lang_dict = {
     remove_help_1:{
         zh: "移除该文件夹（不会从本机删除该文件夹）",
         en: "Remove the folder (The folder will not be deleted from the local machine)",
+    },
+    remove_help_2:{
+        zh: "移除历史？",
+        en: "Remove history?",
     },
     del: {
         zh: "删除",

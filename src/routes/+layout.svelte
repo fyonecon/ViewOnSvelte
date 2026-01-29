@@ -8,9 +8,7 @@
     import Notice from "../parts/Notice.svelte";
     import Alert from "../parts/Alert.svelte";
     import config from "../config";
-    import {app_uid_data} from "../stores/app_uid.store.svelte.js";
-    import {runtime_ok} from "../common/runtime_ok.svelte.js";
-    import {runtime_ok_data} from "../stores/runtime_ok.store.svelte.js";
+    import {browser_ok, runtime_ok} from "../common/middleware.svelte";
 
 
     /** @type {{children: import('svelte').Snippet}} */
@@ -45,7 +43,6 @@
 	// 路由变化之前
 	beforeNavigate(() => {
 		//
-        runtime_ok_data.state = 0; // init
 	});
 
 
@@ -55,18 +52,13 @@
         if (!runtime_ok()){ // false
             func.alert_msg(func.get_translate("runtime_error_alert"), "long");
             page_display="hide";
-            runtime_ok_data.state = -1;
-            //
             return
         }else{ // 附加条件检测
-            if (func.is_weixin() || func.is_work_weixin() || func.is_qq() || func.is_feishu() || func.is_dingding()){ // false
+            if (!browser_ok()){ // false
                 func.alert_msg(func.get_translate("runtime_cn_chat_alert"), "long");
                 page_display="hide";
-                runtime_ok_data.state = -2;
-                //
                 return
             }else{ // ok
-                runtime_ok_data.state = 1;
                 page_display="show";
                 //
                 def.watch_404_route(); // 检测路由变化
@@ -77,7 +69,7 @@
 
     // 页面装载完成后，只运行一次
     onMount(() => {
-        if (!runtime_ok()){return;} // 系统基础条件检测
+        if (!runtime_ok() || !browser_ok()){return;} // 系统基础条件检测
         //
         let theme_event = window.matchMedia('(prefers-color-scheme: dark)');
         theme_event.addEventListener('change', function (event){ // 监测主题变化
