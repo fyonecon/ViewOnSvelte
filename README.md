@@ -2,6 +2,8 @@
 
 项目：https://github.com/fyonecon/ViewOnSvelte
 
+工作流：https://fyonecon.github.io/ViewOnSvelte
+
 ### 推荐IDE（webstorm）：
 ```
 https://www.jetbrains.com/webstorm/download/?section=mac
