@@ -15,6 +15,63 @@
 
     // 本页面函数：Svelte的HTML组件onXXX=中正确调用：={()=>def.xxx()}
     const def = {
+        check_word: function(word = ""){
+            let that = this;
+            // 白名单跳转
+            if (word === "@home"){
+                that.open_url("./home?cache="+func.js_rand(10000, 99999));
+                return true;
+            }
+            else if (word === "@info"){
+                that.open_url("./info");
+                return true;
+            }
+            else if (word === "@404"){
+                that.open_url("./_404");
+                return true;
+            }
+            //
+            else if (word === "@bing"){
+
+                return true;
+            }
+            //
+            else if (word === "@bing"){
+
+                return true;
+            }
+            else if (word === "@baidu"){
+
+                return true;
+            }
+            else if (word === "@sogou"){
+
+                return true;
+            }
+            else if (word === "@google"){
+
+                return true;
+            }
+            else if (word === "@yahoo"){
+
+                return true;
+            }
+            else if (word === "@yandex"){
+
+                return true;
+            }
+            // 正常跳转
+            else{
+                return false;
+            }
+        },
+        open_url: function(href=""){
+            if (browser){
+                window.location.replace(href);
+            }else{
+                func.open_url(href, "_self");
+            }
+        },
         check_param: function(){
             let that = this;
             //
@@ -24,12 +81,10 @@
             if (url_timeout){
                 func.loading_show();
                 if (func.url_timeout_decode("search", url_timeout)){
-                    if (!search_engines_dict[engine]){engine = "bing";}
-                    let href = search_engines_dict[engine].url+encodeURIComponent(word);
-                    if (browser){
-                        window.open(href, "_self")
-                    }else{
-                        func.open_url(href, "_self");
+                    if (!that.check_word(word)){
+                        if (!search_engines_dict[engine]){engine = "bing";}
+                        let href = search_engines_dict[engine].url+encodeURIComponent(word);
+                        that.open_url(href);
                     }
                 }else{ // 过期
                     func.open_url_404("./", func.get_translate("url_timeout"), func.get_href());
