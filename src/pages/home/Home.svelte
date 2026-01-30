@@ -86,8 +86,16 @@
                 // that.create_select();
             });
         },
-        filter_array: function(value=""){ // 数组去重
-            return value;
+        filter_array: function(value=""){ // 去重历史记录
+            let value_string = "";
+            if (value.length>0 && value.indexOf(search_history_split) !== -1){
+                let array = value.split(search_history_split);
+                array = Array.from(new Set(array)); // 数组去重
+                value_string = array.join(search_history_split);
+            }else if (value.length>0 && value.indexOf(search_history_split) === -1){
+                value_string = value;
+            }
+            return value_string;
         },
         show_history: function(value=""){ // 显示历史
             search_history_array = [];
@@ -156,7 +164,11 @@
                         let href = "./search?word="+encodeURIComponent(the_value)+"&engine="+value+"&url_timeout="+func.url_timeout_encode("search", 6*60*60)+"&ap=ipt";
                         open_url_open_timer = setTimeout(function (){
                             if (browser){
-                                window.open(href, "_blank");
+                                if (func.is_mobile_screen()){
+                                    window.open(href, "_self");
+                                }else{
+                                    window.open(href, "_blank");
+                                }
                             }else{
                                 func.open_url_with_default_browser(href);
                             }
@@ -293,19 +305,39 @@
         padding-bottom: 40px;
         padding-top: 50px;
     }
-    @media only screen and (min-width: 440px){
+    @media only screen and (min-width: 200px){
         .search-div{
-            padding-top: 50px;
+            padding-top: 10px;
         }
     }
-    @media only screen and (min-width: 640px){
+    @media only screen and (min-width: 300px){
+        .search-div{
+            padding-top: 20px;
+        }
+    }
+    @media only screen and (min-width: 500px){
+        .search-div{
+            padding-top: 40px;
+        }
+    }
+    @media only screen and (min-width: 600px){
+        .search-div{
+            padding-top: 60px;
+        }
+    }
+    @media only screen and (min-width: 800px){
         .search-div{
             padding-top: 80px;
         }
     }
+    @media only screen and (min-width: 800px){
+        .search-div{
+            padding-top: 100px;
+        }
+    }
     @media only screen and (min-width: 1200px){
         .search-div{
-            padding-top: 160px;
+            padding-top: 130px;
         }
     }
 
@@ -329,12 +361,13 @@
         overflow: hidden;
         clear: both;
         margin-top: 30px;
+        padding: 0 15px;
     }
     .search-div-history{
         width: calc(100%);
         margin-right: auto;
         margin-left: auto;
-        padding: 10px 10px;
+        padding: 10px 20px;
         min-height: 60px;
         max-height: 300px;
         clear: both;
@@ -342,12 +375,12 @@
     }
 
     .input-border{
-        border: 1px solid var(--color-blue-900);
+        border: 1px solid var(--color-blue-800);
         border-radius: 30px;
         opacity: 0.9;
     }
     .btn-border{
-        border: 1px solid var(--color-blue-900);
+        border: 1px solid var(--color-blue-800);
         border-radius: 20px;
         opacity: 0.8;
     }
@@ -384,10 +417,10 @@
         top: 25px;
     }
     .search-div-input-select:focus{
-        border: 1px solid var(--color-blue-400);
+        border: 2px solid var(--color-blue-500);
     }
     .search-div-input-input:focus{
-        border: 1px solid var(--color-blue-400);
+        border: 2px solid var(--color-blue-500);
     }
     .search-div-btn-btn{
         width: calc(100%/3 - 20px);
@@ -409,13 +442,12 @@
     .search-div-input-select-blur {
         transition: transform 0.5s;
         transform: rotateZ(0deg);
-        color: var(--color-blue-900);
+        color: var(--color-blue-800);
     }
-
     .search-div-input-select-focus {
         transition: transform 0.5s;
         transform: rotateZ(90deg);
-        color: var(--color-blue-400);
+        color: var(--color-blue-500);
     }
 
 
