@@ -159,8 +159,10 @@
             let that = this;
             //
             func.loading_show();
+            input_ele.blur();
             let the_value = input_value_search.trim();
             if (the_value){
+                input_ele.focus();
                 clearTimeout(open_url_loading_timer);
                 clearTimeout(open_url_open_timer);
                 //
@@ -169,7 +171,7 @@
                         open_url_loading_timer = setTimeout(function (){
                             that.input_auto_write("");
                             func.loading_hide();
-                        }, 2000);
+                        }, 1000);
                         //
                         if (!value) {value = "bing";}
                         //
@@ -184,13 +186,13 @@
                             }else{
                                 func.open_url_with_default_browser(href);
                             }
-                        }, 400);
+                        }, 100);
                     });
                 });
             }else{
                 input_ele.focus();
                 func.loading_hide();
-                func.notice(func.get_translate("input_null"), "", 2000);
+                // func.notice(func.get_translate("input_null"), "", 2000);
             }
         },
         input_auto_write: function(value=""){ // 自动填充input

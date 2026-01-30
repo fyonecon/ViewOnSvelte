@@ -73,6 +73,19 @@
         // 必要运行
         // def.auto_set_language_index();
         // def.auto_set_theme_model();
+        //
+        let lang = func.get_lang();
+        watch_lang_data.lang_index = lang;
+        lang_index = lang; // 监测本地语言
+        //
+        let theme_event = window.matchMedia('(prefers-color-scheme: dark)');
+        theme_event.addEventListener('change', function (event){ // 监测主题变化
+            let mode = func.get_theme_model();
+            watch_theme_model_data.theme_model = mode;
+            theme_model = mode;
+            document.documentElement.setAttribute('data-mode', mode);
+        });
+
         // 系统基础条件检测
         if (!runtime_ok()){ // false
             func.alert_msg(func.get_translate("runtime_error_alert"), "long");
@@ -95,18 +108,6 @@
     // 页面装载完成后，只运行一次
     onMount(() => {
         if (!runtime_ok() || !browser_ok()){return;} // 系统基础条件检测
-        //
-        let lang = func.get_lang();
-        watch_lang_data.lang_index = lang;
-        lang_index = lang; // 监测本地语言
-        //
-        let theme_event = window.matchMedia('(prefers-color-scheme: dark)');
-        theme_event.addEventListener('change', function (event){ // 监测主题变化
-            let mode = func.get_theme_model();
-            watch_theme_model_data.theme_model = mode;
-            theme_model = mode;
-            document.documentElement.setAttribute('data-mode', mode);
-        });
         //
     });
 
