@@ -23,6 +23,9 @@
     let del_input_history_dialog_is_open = $state(false);
     let input_ele: any; // input标签对象
     let open_url_loading_timer = $state(0);
+    let open_url_open_timer = $state(0);
+    let arrow_direct_class = $state("search-div-input-select-blur");
+    let search_div_min_height = $state((window.innerHeight>window.innerWidth)?window.innerHeight:window.innerWidth);
 
     // 本页面函数：Svelte的HTML组件onXXX=中正确调用：={()=>def.xxx()}
     const def = {
@@ -67,6 +70,12 @@
                     func.notice("DB Error");
                 }
             });
+            // 管理页面高度
+            if (browser){
+                window.addEventListener('resize', function (){
+                    search_div_min_height = window.innerHeight;
+                });
+            }
         },
         update_select: function(event: any){
             let that = this;
@@ -81,7 +90,6 @@
             return value;
         },
         show_history: function(value=""){ // 显示历史
-            console.log("show=", value)
             search_history_array = [];
             if (value.length>0 && value.indexOf(search_history_split) !== -1){
                 let array = value.split(search_history_split);
@@ -130,31 +138,35 @@
         input_run_search: function(){
             let that = this;
             //
+            func.loading_show();
             let the_value = input_value_search.trim();
             if (the_value){
                 clearTimeout(open_url_loading_timer);
-                func.loading_show();
+                clearTimeout(open_url_open_timer);
                 //
                 that.input_history(the_value).then(v=>{
                     that.input_auto_write("");
                     func.get_db_data(search_selected_key).then(value => {
                         open_url_loading_timer = setTimeout(function (){
                             func.loading_hide();
-                        }, 1500);
+                        }, 2000);
                         //
                         if (!value) {value = "bing";}
                         //
                         let href = "./search?word="+encodeURIComponent(the_value)+"&engine="+value+"&url_timeout="+func.url_timeout_encode("search", 6*60*60)+"&ap=ipt";
-                        if (browser){
-                            window.open(href, "_blank");
-                        }else{
-                            func.open_url_with_default_browser(href);
-                        }
+                        open_url_open_timer = setTimeout(function (){
+                            if (browser){
+                                window.open(href, "_blank");
+                            }else{
+                                func.open_url_with_default_browser(href);
+                            }
+                        }, 400);
                     });
                 });
             }else{
                 input_ele.focus();
-                func.notice(func.get_translate("input_null"));
+                func.loading_hide();
+                func.notice(func.get_translate("input_null"), "", 2000);
             }
         },
         input_auto_write: function(value=""){ // 自动填充input
@@ -167,11 +179,22 @@
             input_ele.focus();
         },
         input_del_history: function(){
+            let that = this;
+            //
             func.loading_show();
-            func.del_db_data(search_selected_key).then(state=>{
+            func.del_db_data(search_history_key).then(state=>{
                 del_input_history_dialog_is_open = false;
+                that.input_auto_write("");
+                that.show_history("");
                 func.loading_hide();
             });
+        },
+        change_arrow_direct_class: function(state){
+            if (state){
+                arrow_direct_class = "search-div-input-select-focus";
+            }else{
+                arrow_direct_class = "search-div-input-select-blur";
+            }
         },
     };
 
@@ -207,30 +230,32 @@
 
 </script>
 
-<div>
-    <div class="search-div-input font-text">
-        <label class="label">
-            <select onchange={(event)=>def.update_select(event)}>
-                {#each search_engines_array as option_dict}
-                    <option value="{option_dict.value}" selected="{option_dict.selected}">{option_dict.name}</option>
-                {/each}
-            </select>
-        </label>
-        <label class="label">
-            <input class=" input-style w-full border-radius font-text select-text" type="search" maxlength="1200" placeholder="{func.get_translate('input_placeholder_search')}"
-                   bind:value={input_value_search}
-                   onkeydown={(event)=>def.input_enter(event)}
-                   onmouseenter={(e) => e.currentTarget.focus()}
-                   bind:this={input_ele}
-            />
-        </label>
+<div class="search-div " style="min-height: {search_div_min_height}px;">
+    <div class="search-div-input">
+        <select class="search-div-input-select input-border font-text " onchange={(event)=>def.update_select(event)}>
+            {#each search_engines_array as option_dict}
+                <option value="{option_dict.value}" selected="{option_dict.selected}">{option_dict.name}</option>
+            {/each}
+        </select>
+        <input class="search-div-input-input input-border w-full font-title select-text" type="search" maxlength="1200" placeholder="{func.get_translate('input_placeholder_search')}"
+               bind:value={input_value_search}
+               onkeydown={(event)=>def.input_enter(event)}
+               onmouseenter={(e) => e.currentTarget.focus()}
+               bind:this={input_ele}
+               onfocus={()=>def.change_arrow_direct_class(true)}
+               onblur={()=>def.change_arrow_direct_class(false)}
+        />
+        <span class="search-div-input-arrow {arrow_direct_class} ">
+            <svg class="hide" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20"><path fill="currentColor" d="M11.199 4.6c-.6-.8-1.801-.8-2.401 0l-4.496 6.002c-.74.989-.035 2.4 1.2 2.4h8.995c1.236 0 1.941-1.412 1.2-2.4zM4 15a.5.5 0 0 0 0 1h12a.5.5 0 0 0 0-1z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17a1.72 1.72 0 0 1-1.33-.64l-4.21-5.1a2.1 2.1 0 0 1-.26-2.21A1.76 1.76 0 0 1 7.79 8h8.42a1.76 1.76 0 0 1 1.59 1.05a2.1 2.1 0 0 1-.26 2.21l-4.21 5.1A1.72 1.72 0 0 1 12 17"/></svg>
+        </span>
     </div>
-    <div class="search-div-btn font-title">
-        <button onclick={()=>def.open_dialog()}>删除历史</button>
-        <button onclick={()=>def.input_clear_write()}>重新输入</button>
-        <button onclick={()=>def.input_run_search()}>搜 索</button>
+    <div class="search-div-btn font-text">
+        <button class="search-div-btn-btn break-ellipsis btn-border font-red" onclick={()=>def.open_dialog()}>删除历史</button>
+        <button class="search-div-btn-btn break-ellipsis btn-border" onclick={()=>def.input_clear_write()}>重新输入</button>
+        <button class="search-div-btn-btn break-ellipsis btn-border" onclick={()=>def.input_run_search()}>搜 索</button>
     </div>
-    <div class="search-div-history font-text font-blue">
+    <div class="search-div-history font-text font-blue scroll-y-style">
         {#each search_history_array as history_value, index}
             <button class="history-btn break break-ellipsis" onclick={()=>def.input_auto_write(history_value)} title="{history_value}">{"#"+(index+1)+" "+history_value + " "}</button>
         {/each}
@@ -260,27 +285,123 @@
 </Dialog>
 
 <style>
+    .search-div{
+        width: calc(100%);
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 640px;
+        padding-bottom: 40px;
+        padding-top: 50px;
+    }
+
     .search-div-input{
-        width: 100%;
-        height: 60px;
+        width: calc(100%);
+        margin-right: auto;
+        margin-left: auto;
+        padding: 10px 10px;
+        height: 70px;
+        overflow: hidden;
+        clear: both;
+        margin-top: 30px;
+        position: relative;
     }
     .search-div-btn{
-        width: 100%;
+        width: calc(100%);
+        max-width: 440px;
+        margin-right: auto;
+        margin-left: auto;
         height: 40px;
-    }
-    .search-div-btn>button{
-        width: calc(100%/3 - 4px);
-        float: left;
+        overflow: hidden;
+        clear: both;
+        margin-top: 30px;
     }
     .search-div-history{
-        width: 100%;
+        width: calc(100%);
+        margin-right: auto;
+        margin-left: auto;
+        padding: 10px 10px;
         min-height: 60px;
         max-height: 300px;
+        clear: both;
+        margin-top: 30px;
     }
+
+    .input-border{
+        border: 1px solid var(--color-blue-900);
+        border-radius: 30px;
+        opacity: 0.9;
+    }
+    .btn-border{
+        border: 1px solid var(--color-blue-900);
+        border-radius: 20px;
+        opacity: 0.8;
+    }
+
+    .search-div-input-select{
+        width: 120px;
+        height: 44px;
+        text-align: center;
+        padding: 0 10px;
+        float: left;
+        appearance: none;
+        text-align-last: center;
+        outline: none;
+    }
+    .search-div-input-input{
+        width: calc(100% - 120px - 1px);
+        height: 44px;
+        float: left;
+        padding: 0 10px;
+        margin-left: 1px;
+        outline: none;
+     }
+    .search-div-input-arrow{
+        position: absolute;
+        font-size: 12px !important;
+        line-height: 16px;
+        text-align: center;
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border-radius: 8px;
+        overflow: hidden;
+        left: 114px;
+        top: 25px;
+    }
+    .search-div-input-select:focus{
+        border: 1px solid var(--color-blue-400);
+    }
+    .search-div-input-input:focus{
+        border: 1px solid var(--color-blue-400);
+    }
+    .search-div-btn-btn{
+        width: calc(100%/3 - 20px);
+        overflow: hidden;
+        margin: 0 10px;
+        padding: 0 10px;
+        float: left;
+        height: 38px;
+        opacity: 0.9;
+    }
+
     .history-btn{
-        margin: 3px 10px;
+        margin: 2px 10px;
         max-width: 220px;
         overflow: hidden;
         float: left;
     }
+
+    .search-div-input-select-blur {
+        transition: transform 0.5s;
+        transform: rotateZ(0deg);
+        color: var(--color-blue-900);
+    }
+
+    .search-div-input-select-focus {
+        transition: transform 0.5s;
+        transform: rotateZ(90deg);
+        color: var(--color-blue-400);
+    }
+
+
 </style>
