@@ -1,7 +1,7 @@
 {
-  "name": "Ginthon",
-  "short_name": "Ginthon",
-  "start_url": "./index.html#route=home&from=&utm_source=pwa",
+  "name": "PureHome",
+  "short_name": "PureHome",
+  "start_url": "./?from=&utm_source=pwa",
   "display": "standalone",
   "background_color": "#fefefe",
   "description": "",
