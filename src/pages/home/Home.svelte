@@ -375,7 +375,7 @@
         width: calc(100%);
         margin-right: auto;
         margin-left: auto;
-        padding: 10px 20px;
+        padding: 10px 15px;
         min-height: 60px;
         max-height: 300px;
         clear: both;
@@ -431,10 +431,10 @@
         border: 2px solid var(--color-blue-500);
     }
     .search-div-btn-btn{
-        width: calc(100%/3 - 20px);
+        width: calc(100%/3 - 16px);
         overflow: hidden;
-        margin: 0 10px;
-        padding: 0 10px;
+        margin: 0 8px;
+        padding: 0 5px;
         float: left;
         height: 38px;
         opacity: 0.9;
