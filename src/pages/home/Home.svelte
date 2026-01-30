@@ -293,6 +293,21 @@
         padding-bottom: 40px;
         padding-top: 50px;
     }
+    @media only screen and (min-width: 440px){
+        .search-div{
+            padding-top: 50px;
+        }
+    }
+    @media only screen and (min-width: 640px){
+        .search-div{
+            padding-top: 80px;
+        }
+    }
+    @media only screen and (min-width: 1200px){
+        .search-div{
+            padding-top: 160px;
+        }
+    }
 
     .search-div-input{
         width: calc(100%);
