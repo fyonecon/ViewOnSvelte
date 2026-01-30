@@ -161,9 +161,9 @@
                 clearTimeout(open_url_open_timer);
                 //
                 that.input_history(the_value).then(v=>{
-                    that.input_auto_write("");
                     func.get_db_data(search_selected_key).then(value => {
                         open_url_loading_timer = setTimeout(function (){
+                            that.input_auto_write("");
                             func.loading_hide();
                         }, 2000);
                         //
