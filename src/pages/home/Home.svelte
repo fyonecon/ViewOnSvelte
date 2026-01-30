@@ -90,7 +90,15 @@
             let value_string = "";
             if (value.length>0 && value.indexOf(search_history_split) !== -1){
                 let array = value.split(search_history_split);
-                array = Array.from(new Set(array)); // 数组去重
+                // 数组去重
+                array = Array.from(new Set(array));
+                // 截取数组
+                let start = 0;
+                if (array.length > search_history_max_len){
+                    start = search_history_max_len - array.length;
+                }
+                array = array.slice(start);
+                // 数组转字符串
                 value_string = array.join(search_history_split);
             }else if (value.length>0 && value.indexOf(search_history_split) === -1){
                 value_string = value;
