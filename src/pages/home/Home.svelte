@@ -16,7 +16,7 @@
     const search_selected_key = config.app.app_class + "search_selected";
     const search_history_key = search_selected_key+"_history";
     const search_history_split = "#@#"+search_history_key+"#@#";
-    const search_history_max_len = 30;
+    const search_history_max_len = 200;
 
     let search_engines_array: object[] = $state([]);
     let search_history_array: string[] = $state([]);
