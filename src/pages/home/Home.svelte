@@ -159,10 +159,8 @@
             let that = this;
             //
             func.loading_show();
-            input_ele.blur();
             let the_value = input_value_search.trim();
             if (the_value){
-                input_ele.focus();
                 clearTimeout(open_url_loading_timer);
                 clearTimeout(open_url_open_timer);
                 //
