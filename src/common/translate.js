@@ -216,7 +216,7 @@ const lang_dict = {
     },
     remove_help_2:{
         zh: "移除搜索历史？",
-        en: "Remove search history?",
+        en: "Clear search history?",
     },
     del: {
         zh: "删除",
@@ -249,7 +249,7 @@ const lang_dict = {
     //
     search_del_history: {
         zh: "移除历史",
-        en: "Remove history",
+        en: "Clear",
     },
     search_clear_input: {
         zh: "重新输入",

@@ -58,7 +58,7 @@
                     search_engines_array = []; // init
                     Object.keys(search_engines_dict).forEach(key => {
                         let info = search_engines_dict[key];
-                        let selected = value===key?"selected":"";
+                        let selected = (value===key)?"selected":"";
                         search_engines_array.push({
                             name: info.name,
                             value: key,
@@ -66,8 +66,12 @@
                             selected: selected,
                         });
                     });
-                }else{
+                }else{ // 给一个默认值
                     func.notice("DB Error");
+                    func.set_db_data(search_selected_key, value).then(v=>{
+                        func.console_log("update_select=", value, v);
+                        // that.create_select();
+                    });
                 }
             });
             // 管理页面高度
@@ -422,7 +426,7 @@
         border-radius: 8px;
         overflow: hidden;
         left: 114px;
-        top: 25px;
+        top: 24px;
     }
     .search-div-input-select:focus{
         border: 2px solid var(--color-blue-500);
