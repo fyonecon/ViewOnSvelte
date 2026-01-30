@@ -271,9 +271,9 @@
         </span>
     </div>
     <div class="search-div-btn font-text">
-        <button class="search-div-btn-btn break-ellipsis btn-border font-red" onclick={()=>def.open_dialog()}>删除历史</button>
-        <button class="search-div-btn-btn break-ellipsis btn-border" onclick={()=>def.input_clear_write()}>重新输入</button>
-        <button class="search-div-btn-btn break-ellipsis btn-border" onclick={()=>def.input_run_search()}>搜 索</button>
+        <button class="search-div-btn-btn break-ellipsis btn-border font-red" onclick={()=>def.open_dialog()}>{func.get_translate("search_del_history")}</button>
+        <button class="search-div-btn-btn break-ellipsis btn-border" onclick={()=>def.input_clear_write()}>{func.get_translate("search_clear_input")}</button>
+        <button class="search-div-btn-btn break-ellipsis btn-border" onclick={()=>def.input_run_search()}>🔍&nbsp;{func.get_translate("search_enter_input")}</button>
     </div>
     <div class="search-div-history font-text font-blue scroll-y-style">
         {#each search_history_array as history_value, index}

@@ -215,8 +215,8 @@ const lang_dict = {
         en: "Remove the folder (The folder will not be deleted from the local machine)",
     },
     remove_help_2:{
-        zh: "移除历史？",
-        en: "Remove history?",
+        zh: "移除搜索历史？",
+        en: "Remove search history?",
     },
     del: {
         zh: "删除",
@@ -245,7 +245,20 @@ const lang_dict = {
     runtime_cn_chat_alert: {
         zh: "😊 请不要在「微信、QQ、钉钉、飞书、企业微信」中打开本网站，请使用外部浏览器。",
         en: "😊 Please do not open this website within \"WeChat, QQ, DingTalk, Feishu(Lark), or Enterprise WeChat.\" Please use an external browser instead.",
-    }
+    },
+    //
+    search_del_history: {
+        zh: "移除历史",
+        en: "Remove history",
+    },
+    search_clear_input: {
+        zh: "重新输入",
+        en: "Rewrite",
+    },
+    search_enter_input: {
+        zh: "搜 索",
+        en: "Search",
+    },
 
     // =========
 //
