@@ -1066,6 +1066,14 @@ const func = {
             return false;
         }
     },
+    is_url: function (string=""){
+        try {
+            new URL(string);
+            return true;
+        } catch (err) {
+            return false;
+        }
+    },
 
     //
 }

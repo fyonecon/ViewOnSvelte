@@ -7,6 +7,7 @@
     import search_engines_dict from "../../common/search_engines";
     import {browser_ok, runtime_ok} from "../../common/middleware.svelte";
     import {Dialog, Portal} from "@skeletonlabs/skeleton-svelte";
+    import {browser} from "$app/environment";
 
     // 本页面参数
     const animation = 'transition transition-discrete opacity-0 translate-y-[100px] starting:data-[state=open]:opacity-0 starting:data-[state=open]:translate-y-[100px] data-[state=open]:opacity-100 data-[state=open]:translate-y-0';
@@ -18,8 +19,10 @@
     const search_history_max_len = 30;
 
     let search_engines_array: object[] = $state([]);
-    let search_history_array:string[] = $state([]);
+    let search_history_array: string[] = $state([]);
     let del_input_history_dialog_is_open = $state(false);
+    let input_ele: any; // input标签对象
+    let open_url_loading_timer = $state(0);
 
     // 本页面函数：Svelte的HTML组件onXXX=中正确调用：={()=>def.xxx()}
     const def = {
@@ -65,7 +68,7 @@
                 }
             });
         },
-        update_select: function(event){
+        update_select: function(event: any){
             let that = this;
             //
             let value = event.target.value;
@@ -78,28 +81,44 @@
             return value;
         },
         show_history: function(value=""){ // 显示历史
-
+            console.log("show=", value)
+            search_history_array = [];
+            if (value.length>0 && value.indexOf(search_history_split) !== -1){
+                let array = value.split(search_history_split);
+                for (let i=0; i<array.length; i++){
+                    let the_value = array[i];
+                    if (the_value.trim()){
+                        search_history_array.push(the_value);
+                    }
+                }
+            }else if (value.length>0 && value.indexOf(search_history_split) === -1){
+                search_history_array.push(value);
+            }
         },
-        input_history: function(_value=""){
+        input_history: function(_value=""){ // 更新与显示
             let that = this;
             //
             return new Promise(resolve1 => {
                 func.get_db_data(search_history_key).then(value => {
-                    if (value){
-                        value = value + search_history_split + _value;
+                    if (_value.trim().length>0){
+                        if (value){
+                            value = value + search_history_split + _value;
+                        }else{
+                            value = search_history_split + _value;
+                        }
+                        // 数组去重
+                        let new_value = that.filter_array(value);
+                        func.set_db_data(search_history_key, new_value).then(_v=>{
+                            that.show_history(new_value);
+                            resolve1(new_value);
+                        });
                     }else{
-                        value = search_history_split + _value;
+                        that.show_history(value);
                     }
-                    // 数组去重
-                    let new_value = that.filter_array(value);
-                    func.set_db_data(search_history_key, new_value).then(_v=>{
-                        that.show_history(new_value);
-                        resolve1(new_value);
-                    });
                 });
             });
         },
-        input_enter: function(event){
+        input_enter: function(event: any){
             let that = this;
             //
             if (event.key === 'Enter') {
@@ -113,16 +132,28 @@
             //
             let the_value = input_value_search.trim();
             if (the_value){
+                clearTimeout(open_url_loading_timer);
+                func.loading_show();
+                //
                 that.input_history(the_value).then(v=>{
-                    that.input_clear_write();
-                    //
+                    that.input_auto_write("");
                     func.get_db_data(search_selected_key).then(value => {
+                        open_url_loading_timer = setTimeout(function (){
+                            func.loading_hide();
+                        }, 1500);
+                        //
                         if (!value) {value = "bing";}
+                        //
                         let href = "./search?word="+encodeURIComponent(the_value)+"&engine="+value+"&url_timeout="+func.url_timeout_encode("search", 6*60*60)+"&ap=ipt";
-                        func.open_url_with_default_browser(href);
+                        if (browser){
+                            window.open(href, "_blank");
+                        }else{
+                            func.open_url_with_default_browser(href);
+                        }
                     });
                 });
             }else{
+                input_ele.focus();
                 func.notice(func.get_translate("input_null"));
             }
         },
@@ -133,6 +164,7 @@
             let that = this;
             //
             that.input_auto_write("");
+            input_ele.focus();
         },
         input_del_history: function(){
             func.loading_show();
@@ -149,6 +181,7 @@
         console.log("page_start()=", route);
         // 开始
         def.create_select();
+        def.input_history("")
     }
 
 
@@ -175,27 +208,31 @@
 </script>
 
 <div>
-    <div>
+    <div class="search-div-input font-text">
         <label class="label">
             <select onchange={(event)=>def.update_select(event)}>
                 {#each search_engines_array as option_dict}
                     <option value="{option_dict.value}" selected="{option_dict.selected}">{option_dict.name}</option>
                 {/each}
-<!--                <option value="bing" selected>Bing</option>-->
             </select>
         </label>
         <label class="label">
-            <input class=" input-style w-full border-radius font-text select-text" type="search" maxlength="1200" placeholder="{func.get_translate('input_placeholder_search')}" bind:value={input_value_search} onkeydown={(event)=>def.input_enter(event)} onmouseenter={(e) => e.currentTarget.focus()} />
+            <input class=" input-style w-full border-radius font-text select-text" type="search" maxlength="1200" placeholder="{func.get_translate('input_placeholder_search')}"
+                   bind:value={input_value_search}
+                   onkeydown={(event)=>def.input_enter(event)}
+                   onmouseenter={(e) => e.currentTarget.focus()}
+                   bind:this={input_ele}
+            />
         </label>
     </div>
-    <div>
+    <div class="search-div-btn font-title">
         <button onclick={()=>def.open_dialog()}>删除历史</button>
         <button onclick={()=>def.input_clear_write()}>重新输入</button>
         <button onclick={()=>def.input_run_search()}>搜 索</button>
     </div>
-    <div>
-        {#each search_history_array as history_value}
-            <button class="" onclick={()=>def.input_auto_write(history_value)}>{"# "+history_value}</button>
+    <div class="search-div-history font-text font-blue">
+        {#each search_history_array as history_value, index}
+            <button class="history-btn break break-ellipsis" onclick={()=>def.input_auto_write(history_value)} title="{history_value}">{"#"+(index+1)+" "+history_value + " "}</button>
         {/each}
     </div>
 </div>
@@ -221,3 +258,29 @@
         </Dialog.Positioner>
     </Portal>
 </Dialog>
+
+<style>
+    .search-div-input{
+        width: 100%;
+        height: 60px;
+    }
+    .search-div-btn{
+        width: 100%;
+        height: 40px;
+    }
+    .search-div-btn>button{
+        width: calc(100%/3 - 4px);
+        float: left;
+    }
+    .search-div-history{
+        width: 100%;
+        min-height: 60px;
+        max-height: 300px;
+    }
+    .history-btn{
+        margin: 3px 10px;
+        max-width: 220px;
+        overflow: hidden;
+        float: left;
+    }
+</style>

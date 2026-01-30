@@ -15,55 +15,48 @@
 
     // 本页面函数：Svelte的HTML组件onXXX=中正确调用：={()=>def.xxx()}
     const def = {
-        check_word: function(word = ""){
+        check_white_word: function(word = ""){
             let that = this;
+            let back_state = false;
             // 白名单跳转
             if (word === "@home"){
+                back_state = true;
                 that.open_url("./home?cache="+func.js_rand(10000, 99999));
-                return true;
             }
             else if (word === "@info"){
+                back_state = true;
                 that.open_url("./info");
-                return true;
             }
             else if (word === "@404"){
+                back_state = true;
                 that.open_url("./_404");
-                return true;
+            }
+            // 搜索引擎
+            else if (word === "@bing"){
+                back_state = true;
             }
             //
             else if (word === "@bing"){
-
-                return true;
-            }
-            //
-            else if (word === "@bing"){
-
-                return true;
+                back_state = true;
             }
             else if (word === "@baidu"){
-
-                return true;
+                back_state = true;
             }
             else if (word === "@sogou"){
-
-                return true;
+                back_state = true;
             }
             else if (word === "@google"){
-
-                return true;
+                back_state = true;
             }
             else if (word === "@yahoo"){
-
-                return true;
+                back_state = true;
             }
             else if (word === "@yandex"){
+                back_state = true;
+            }
 
-                return true;
-            }
-            // 正常跳转
-            else{
-                return false;
-            }
+            //
+            return back_state;
         },
         open_url: function(href=""){
             if (browser){
@@ -81,10 +74,17 @@
             if (url_timeout){
                 func.loading_show();
                 if (func.url_timeout_decode("search", url_timeout)){
-                    if (!that.check_word(word)){
+                    // 是url链接就直接打开
+                    if (func.is_url(word)){
+                        that.open_url(word);
+                        return
+                    }
+                    // word白名单级校验
+                    if (!that.check_white_word(word)){ // 正常打开关键词
                         if (!search_engines_dict[engine]){engine = "bing";}
                         let href = search_engines_dict[engine].url+encodeURIComponent(word);
                         that.open_url(href);
+                        return;
                     }
                 }else{ // 过期
                     func.open_url_404("./", func.get_translate("url_timeout"), func.get_href());
