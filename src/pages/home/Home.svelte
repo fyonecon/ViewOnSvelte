@@ -8,6 +8,7 @@
     import {browser_ok, runtime_ok} from "../../common/middleware.svelte";
     import {Dialog, Portal} from "@skeletonlabs/skeleton-svelte";
     import {browser} from "$app/environment";
+    import {input_enter_data} from "../../stores/input_enter.store.svelte";
 
     // 本页面参数
     const animation = 'transition transition-discrete opacity-0 translate-y-[100px] starting:data-[state=open]:opacity-0 starting:data-[state=open]:translate-y-[100px] data-[state=open]:opacity-100 data-[state=open]:translate-y-0';
@@ -22,7 +23,7 @@
     let search_engines_array: object[] = $state([]);
     let search_history_array: string[] = $state([]);
     let del_input_history_dialog_is_open = $state(false);
-    let input_ele: any; // input标签对象
+    let input_object: any; // input标签dom对象
     let open_url_loading_timer = $state(0);
     let open_url_open_timer = $state(0);
     let arrow_direct_class = $state("search-div-input-select-blur");
@@ -149,11 +150,16 @@
         },
         input_enter: function(event: any){
             let that = this;
-            //
+            // 处理Enter
             if (event.key === 'Enter') {
-                console.log('Enter pressed:', input_value_search);
-                // 执行回车操作
-                that.input_run_search();
+                if (input_enter_data.input_doing === 1 || input_enter_data.input_doing === 2){ // 输入法输入完成
+                    func.console_log("输入法输入完成=", input_enter_data.input_doing);
+                    input_enter_data.input_doing = -1; // init
+                    // 执行回车操作
+                    that.input_run_search();
+                }else{ // 输入法正在输入
+                    func.console_log("输入法正在输入=", input_enter_data.input_doing);
+                }
             }
         },
         input_run_search: function(){
@@ -189,7 +195,7 @@
                     });
                 });
             }else{
-                input_ele.focus();
+                input_object.focus();
                 func.loading_hide();
                 // func.notice(func.get_translate("input_null"), "", 2000);
             }
@@ -201,7 +207,7 @@
             let that = this;
             //
             that.input_auto_write("");
-            input_ele.focus();
+            input_object.focus();
         },
         input_del_history: function(){
             let that = this;
@@ -227,9 +233,11 @@
     // 页面函数执行的入口，实时更新数据
     function page_start(){
         func.console_log("page_start()=", route);
-        // 开始
+        // 创建视图
         def.create_select();
         def.input_history("");
+        // 监听输入法输入事件
+        func.watch_input_enter(input_object);
         // 监测页面标签是否处于显示
         if (browser){
             document.addEventListener("visibilitychange", () => {
@@ -274,9 +282,9 @@
         </select>
         <input class="search-div-input-input input-border w-full font-title select-text" type="search" maxlength="1200" placeholder="{func.get_translate('input_placeholder_search')}"
                bind:value={input_value_search}
-               onkeydown={(event)=>def.input_enter(event)}
+               onkeydown={(e)=>def.input_enter(e)}
                onmouseenter={(e) => e.currentTarget.focus()}
-               bind:this={input_ele}
+               bind:this={input_object}
                onfocus={()=>def.change_arrow_direct_class(true)}
                onblur={()=>def.change_arrow_direct_class(false)}
         />
