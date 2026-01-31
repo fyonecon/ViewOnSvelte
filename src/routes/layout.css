@@ -52,6 +52,10 @@ html {
     -webkit-app-region: no-drag !important;
 }
 
+.clear{
+    clear: both;
+}
+
 .hide {
 	display: none !important;
 }

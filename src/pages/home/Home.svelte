@@ -13,6 +13,7 @@
     const animation = 'transition transition-discrete opacity-0 translate-y-[100px] starting:data-[state=open]:opacity-0 starting:data-[state=open]:translate-y-[100px] data-[state=open]:opacity-100 data-[state=open]:translate-y-0';
     let route = $state(func.get_route());
     let input_value_search = $state("");
+
     const search_selected_key = config.app.app_class + "search_selected";
     const search_history_key = search_selected_key+"_history";
     const search_history_split = "#@#"+search_history_key+"#@#";
@@ -90,6 +91,20 @@
                 // that.create_select();
             });
         },
+        show_history: function(value=""){ // 显示历史
+            search_history_array = [];
+            if (value.length>0 && value.indexOf(search_history_split) !== -1){
+                let array = value.split(search_history_split);
+                for (let i=0; i<array.length; i++){
+                    let the_value = array[i];
+                    if (the_value.trim()){
+                        search_history_array.unshift(the_value);
+                    }
+                }
+            }else if (value.length>0 && value.indexOf(search_history_split) === -1){
+                search_history_array.unshift(value);
+            }
+        },
         filter_array: function(value=""){ // 去重历史记录
             let value_string = "";
             if (value.length>0 && value.indexOf(search_history_split) !== -1){
@@ -108,20 +123,6 @@
                 value_string = value;
             }
             return value_string;
-        },
-        show_history: function(value=""){ // 显示历史
-            search_history_array = [];
-            if (value.length>0 && value.indexOf(search_history_split) !== -1){
-                let array = value.split(search_history_split);
-                for (let i=0; i<array.length; i++){
-                    let the_value = array[i];
-                    if (the_value.trim()){
-                        search_history_array.unshift(the_value);
-                    }
-                }
-            }else if (value.length>0 && value.indexOf(search_history_split) === -1){
-                search_history_array.unshift(value);
-            }
         },
         input_history: function(_value=""){ // 更新与显示
             let that = this;
@@ -213,7 +214,7 @@
                 func.loading_hide();
             });
         },
-        change_arrow_direct_class: function(state){
+        change_arrow_direct_class: function(state=false){
             if (state){
                 arrow_direct_class = "search-div-input-select-focus";
             }else{
@@ -225,10 +226,20 @@
 
     // 页面函数执行的入口，实时更新数据
     function page_start(){
-        console.log("page_start()=", route);
+        func.console_log("page_start()=", route);
         // 开始
         def.create_select();
-        def.input_history("")
+        def.input_history("");
+        // 监测页面标签是否处于显示
+        if (browser){
+            document.addEventListener("visibilitychange", () => {
+                if (document.hidden) { // onHide
+                    //
+                } else { // onShow
+                    def.input_history("");
+                }
+            });
+        }
     }
 
 
@@ -254,7 +265,7 @@
 
 </script>
 
-<div class="search-div " style="min-height: {search_div_min_height}px;">
+<div class="search-div select-none" style="min-height: {search_div_min_height}px;">
     <div class="search-div-input">
         <select class="search-div-input-select input-border font-text " onchange={(event)=>def.update_select(event)}>
             {#each search_engines_array as option_dict}
@@ -269,15 +280,15 @@
                onfocus={()=>def.change_arrow_direct_class(true)}
                onblur={()=>def.change_arrow_direct_class(false)}
         />
-        <span class="search-div-input-arrow {arrow_direct_class} ">
+        <span class="search-div-input-arrow {arrow_direct_class} " >
             <svg class="hide" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20"><path fill="currentColor" d="M11.199 4.6c-.6-.8-1.801-.8-2.401 0l-4.496 6.002c-.74.989-.035 2.4 1.2 2.4h8.995c1.236 0 1.941-1.412 1.2-2.4zM4 15a.5.5 0 0 0 0 1h12a.5.5 0 0 0 0-1z"/></svg>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17a1.72 1.72 0 0 1-1.33-.64l-4.21-5.1a2.1 2.1 0 0 1-.26-2.21A1.76 1.76 0 0 1 7.79 8h8.42a1.76 1.76 0 0 1 1.59 1.05a2.1 2.1 0 0 1-.26 2.21l-4.21 5.1A1.72 1.72 0 0 1 12 17"/></svg>
         </span>
     </div>
     <div class="search-div-btn font-text">
-        <button class="search-div-btn-btn break-ellipsis btn-border font-red" onclick={()=>def.open_dialog()}>{func.get_translate("search_del_history")}</button>
-        <button class="search-div-btn-btn break-ellipsis btn-border" onclick={()=>def.input_clear_write()}>{func.get_translate("search_clear_input")}</button>
-        <button class="search-div-btn-btn break-ellipsis btn-border" onclick={()=>def.input_run_search()}>{@html func.get_translate("search_enter_input")}</button>
+        <button class="search-div-btn-btn break-ellipsis btn-border click font-red" onclick={()=>def.open_dialog()}>{func.get_translate("search_del_history")}</button>
+        <button class="search-div-btn-btn break-ellipsis btn-border click" onclick={()=>def.input_clear_write()}>{func.get_translate("search_clear_input")}</button>
+        <button class="search-div-btn-btn break-ellipsis btn-border click" onclick={()=>def.input_run_search()}>{@html func.get_translate("search_enter_input")}</button>
     </div>
     <div class="search-div-history font-text font-blue scroll-y-style">
         {#each search_history_array as history_value}
@@ -411,7 +422,7 @@
         width: calc(100% - 120px - 0px);
         height: 44px;
         float: left;
-        padding: 0 8px;
+        padding: 0 10px;
         margin-left: 0;
         outline: none;
      }

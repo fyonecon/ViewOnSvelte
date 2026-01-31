@@ -3,6 +3,7 @@
 
     import func from "../common/func.svelte.js";
     import config from "../config";
+    import {browser} from "$app/environment";
 
     //
     function go_home(){
@@ -15,7 +16,10 @@
 
     //
     let href = func.get_href();
-    let host = "./";
+    let host = config.sys.base_route+"/";
+    if (browser){
+        host = "//"+window.location.host+config.sys.base_route+"/";
+    }
 
     // 兼容老View框架的路由
     if (href.indexOf("route=home") != -1){
@@ -48,6 +52,7 @@
         }
         func.open_url(url);
     }
+    //
     else{
         go_home();
     }

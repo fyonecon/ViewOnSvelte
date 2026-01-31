@@ -46,8 +46,8 @@ const lang_dict = {
         en: "Example",
     },
     Home: {
-        zh: "主页",
-        en: "Home",
+        zh: "PureHome",
+        en: "PureHome",
     },
     Settings: {
         zh: "设置",
@@ -80,7 +80,11 @@ const lang_dict = {
     },
     Info: {
         zh: "查看信息",
-        en: "See info",
+        en: "Info",
+    },
+    Bookmark: {
+        zh: "收藏",
+        en: "Bookmark",
     },
     url_timeout: {
         zh: "链接过期",

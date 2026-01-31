@@ -11,6 +11,13 @@
 
     // 本页面参数
     let route = $state(func.get_route());
+    let browser_search_engine_show = $state("hide");
+    let browser_search_engine = $state("");
+
+    const search_selected_key = config.app.app_class + "search_selected";
+    const search_history_key = search_selected_key+"_history";
+    const search_history_split = "#@#"+search_history_key+"#@#";
+    const search_history_max_len = 200;
 
 
     // 本页面函数：Svelte的HTML组件onXXX=中正确调用：={()=>def.xxx()}
@@ -18,10 +25,15 @@
         check_white_word: function(word = ""){
             let that = this;
             let back_state = false;
+            let browser_search_engine_http = (window.location.host.indexOf(".github.io") !== -1)?"https":"http";
             // 白名单跳转
             if (word === "@home"){
                 back_state = true;
                 that.open_url("./home?cache="+func.js_rand(10000, 99999));
+            }
+            else if (word === "@bookmark"){
+                back_state = true;
+                that.open_url("./bookmark");
             }
             else if (word === "@info"){
                 back_state = true;
@@ -31,29 +43,32 @@
                 back_state = true;
                 that.open_url("./_404");
             }
-            // 搜索引擎
+            // 自定义搜索引擎
             else if (word === "@bing"){
-                back_state = true;
-            }
-            //
-            else if (word === "@bing"){
+                browser_search_engine = browser_search_engine_http + "://" + window.location.host + config.sys.base_route + "/search" + "?engine=bing&history=yes&word=%s";
                 back_state = true;
             }
             else if (word === "@baidu"){
+                browser_search_engine = browser_search_engine_http + "://" + window.location.host + config.sys.base_route + "/search" + "?engine=baidu&history=no&word=%s";
                 back_state = true;
             }
             else if (word === "@sogou"){
+                browser_search_engine = browser_search_engine_http + "://" + window.location.host + config.sys.base_route + "/search" + "?engine=sogou&history=no&word=%s";
                 back_state = true;
             }
             else if (word === "@google"){
+                browser_search_engine = browser_search_engine_http + "://" + window.location.host + config.sys.base_route + "/search" + "?engine=google&history=yes&word=%s";
                 back_state = true;
             }
             else if (word === "@yahoo"){
+                browser_search_engine = browser_search_engine_http + "://" + window.location.host + config.sys.base_route + "/search" + "?engine=yahoo&history=yes&word=%s";
                 back_state = true;
             }
             else if (word === "@yandex"){
+                browser_search_engine = browser_search_engine_http + "://" + window.location.host + config.sys.base_route + "/search" + "?engine=yandex&history=yes&word=%s";
                 back_state = true;
             }
+            //
 
             //
             return back_state;
@@ -67,12 +82,17 @@
         },
         check_param: function(){
             let that = this;
-            //
+            // 接收的参数
             let word = func.search_href_param("", "word").trim();
             let engine = func.search_href_param("", "engine").trim();
+            let history = func.search_href_param("", "history").trim();
             let url_timeout = func.search_href_param("", "url_timeout").trim();
-            //
-            if (url_timeout){
+            // 插入历史记录
+            if (history === "yes" || history === "true" || history === "True" || history === "1"){
+                that.input_history(word);
+            }
+            // 执行跳转或展示
+            if (url_timeout){ // 从搜索页过来
                 func.loading_show();
                 if (func.url_timeout_decode("search", url_timeout)){
                     // 是url链接就直接打开
@@ -82,24 +102,89 @@
                     }
                     // word白名单级校验
                     if (!that.check_white_word(word)){ // 正常打开关键词
+                        browser_search_engine_show = "hide";
                         if (!search_engines_dict[engine]){engine = "bing";}
                         let href = search_engines_dict[engine].url+encodeURIComponent(word);
                         that.open_url(href);
-                        return;
+                    }else{
+                        func.loading_hide();
+                        browser_search_engine_show = "show";
                     }
                 }else{ // 过期
                     func.open_url_404("./", func.get_translate("url_timeout"), func.get_href());
                 }
+            }else{ // 从浏览器搜索栏过来
+                // word白名单级校验
+                if (!that.check_white_word(word)){ // 正常打开关键词
+                    browser_search_engine_show = "hide";
+                    if (!search_engines_dict[engine]){engine = "bing";}
+                    let href = search_engines_dict[engine].url+encodeURIComponent(word);
+                    that.open_url(href);
+                }else{
+                    func.loading_hide();
+                    browser_search_engine_show = "show";
+                }
             }
+        },
+        filter_array: function(value=""){ // 去重历史记录
+            let value_string = "";
+            if (value.length>0 && value.indexOf(search_history_split) !== -1){
+                let array = value.split(search_history_split);
+                // 数组去重
+                array = Array.from(new Set(array));
+                // 截取数组
+                let start = 0;
+                if (array.length > search_history_max_len){
+                    start = search_history_max_len - array.length;
+                }
+                array = array.slice(start);
+                // 数组转字符串
+                value_string = array.join(search_history_split);
+            }else if (value.length>0 && value.indexOf(search_history_split) === -1){
+                value_string = value;
+            }
+            return value_string;
+        },
+        input_history: function(_value=""){ // 更新与显示
+            let that = this;
+            //
+            return new Promise(resolve1 => {
+                func.get_db_data(search_history_key).then(value => {
+                    if (_value.trim().length>0){
+                        if (value){
+                            value = value + search_history_split + _value;
+                        }else{
+                            value = search_history_split + _value;
+                        }
+                        // 数组去重
+                        let new_value = that.filter_array(value);
+                        func.set_db_data(search_history_key, new_value).then(_v=>{
+                            resolve1(new_value);
+                        });
+                    }else{
+                        //
+                    }
+                });
+            });
         },
     };
 
 
     // 页面函数执行的入口，实时更新数据
     function page_start(){
-        console.log("page_start()=", route);
+        func.console_log("page_start()=", route);
         // 开始
         def.check_param();
+        // 监测页面标签是否处于显示
+        if (browser){
+            document.addEventListener("visibilitychange", () => {
+                if (document.hidden) { // onHide
+                    //
+                } else { // onShow
+                    def.check_param();
+                }
+            });
+        }
     }
 
 
@@ -125,17 +210,16 @@
 
 </script>
 
-<div class="hide">
-    <h3>{route}</h3>
-    <ul class="ul-group font-text">
-        <li class="li-group">
-            <div class="li-group-title break">
-                test
-            </div>
-            <div class="li-group-content select-text">
-                123
-            </div>
-        </li>
-
-    </ul>
+<div class="browser-search-engine {browser_search_engine_show} ">
+    <br/>
+    <h3 class="font-title">可以添加如下链接到浏览器的自定义搜索引擎：</h3>
+    <br/>
+    <div class="font-text select-text font-blue break">{browser_search_engine}</div>
+    <br/>
 </div>
+
+<style>
+    .browser-search-engine{
+        padding: 20px 20px;
+    }
+</style>

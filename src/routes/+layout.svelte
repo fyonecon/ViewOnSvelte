@@ -11,6 +11,7 @@
     import {browser_ok, runtime_ok} from "../common/middleware.svelte";
     import {watch_lang_data} from "../stores/watch_lang.store.svelte";
     import {watch_theme_model_data} from "../stores/watch_theme_model.store.svelte";
+    import {browser} from "$app/environment";
 
 
     /** @type {{children: import('svelte').Snippet}} */
@@ -73,6 +74,7 @@
         // 必要运行
         // def.auto_set_language_index();
         // def.auto_set_theme_model();
+
         //
         let lang = func.get_lang();
         watch_lang_data.lang_index = lang;
@@ -99,12 +101,14 @@
                 def.watch_404_route(); // 检测路由变化
             }
         }
+
 	});
 
 
     // 页面装载完成后，只运行一次
     onMount(() => {
         if (!runtime_ok() || !browser_ok()){return;} // 系统基础条件检测
+
         //
         let theme_event = window.matchMedia('(prefers-color-scheme: dark)');
         theme_event.addEventListener('change', function (event){ // 监测主题变化
@@ -113,6 +117,17 @@
             theme_model = mode;
             document.documentElement.setAttribute('data-mode', mode);
         });
+
+        // 监测页面标签是否处于显示
+        if (browser){
+            document.addEventListener("visibilitychange", () => {
+                if (document.hidden) { // onHide
+                    func.console_log("onHide");
+                } else { // onShow
+                    func.console_log("onShow");
+                }
+            });
+        }
 
     });
 

@@ -18,7 +18,7 @@
 
     // 页面函数执行的入口，实时更新数据
     function page_start(){
-        console.log("page_start()=", route);
+        func.console_log("page_start()=", route);
         // 开始
     }
 
