@@ -25,6 +25,7 @@
         check_white_word: function(word = ""){
             let that = this;
             let back_state = false;
+            browser_search_engine_show = "hide";
             let browser_search_engine_http = (window.location.host.indexOf(".github.io") !== -1)?"https":"http";
             // 白名单跳转
             if (word === "@home"){
@@ -45,26 +46,32 @@
             }
             // 自定义搜索引擎
             else if (word === "@bing"){
+                browser_search_engine_show = "show";
                 browser_search_engine = browser_search_engine_http + "://" + window.location.host + config.sys.base_route + "/search" + "?engine=bing&history=yes&word=%s";
                 back_state = true;
             }
             else if (word === "@baidu"){
+                browser_search_engine_show = "show";
                 browser_search_engine = browser_search_engine_http + "://" + window.location.host + config.sys.base_route + "/search" + "?engine=baidu&history=no&word=%s";
                 back_state = true;
             }
             else if (word === "@sogou"){
+                browser_search_engine_show = "show";
                 browser_search_engine = browser_search_engine_http + "://" + window.location.host + config.sys.base_route + "/search" + "?engine=sogou&history=no&word=%s";
                 back_state = true;
             }
             else if (word === "@google"){
+                browser_search_engine_show = "show";
                 browser_search_engine = browser_search_engine_http + "://" + window.location.host + config.sys.base_route + "/search" + "?engine=google&history=yes&word=%s";
                 back_state = true;
             }
             else if (word === "@yahoo"){
+                browser_search_engine_show = "show";
                 browser_search_engine = browser_search_engine_http + "://" + window.location.host + config.sys.base_route + "/search" + "?engine=yahoo&history=yes&word=%s";
                 back_state = true;
             }
             else if (word === "@yandex"){
+                browser_search_engine_show = "show";
                 browser_search_engine = browser_search_engine_http + "://" + window.location.host + config.sys.base_route + "/search" + "?engine=yandex&history=yes&word=%s";
                 back_state = true;
             }
@@ -102,13 +109,11 @@
                     }
                     // word白名单级校验
                     if (!that.check_white_word(word)){ // 正常打开关键词
-                        browser_search_engine_show = "hide";
                         if (!search_engines_dict[engine]){engine = "bing";}
                         let href = search_engines_dict[engine].url+encodeURIComponent(word);
                         that.open_url(href);
                     }else{
                         func.loading_hide();
-                        browser_search_engine_show = "show";
                     }
                 }else{ // 过期
                     func.open_url_404("./", func.get_translate("url_timeout"), func.get_href());
@@ -116,13 +121,11 @@
             }else{ // 从浏览器搜索栏过来
                 // word白名单级校验
                 if (!that.check_white_word(word)){ // 正常打开关键词
-                    browser_search_engine_show = "hide";
                     if (!search_engines_dict[engine]){engine = "bing";}
                     let href = search_engines_dict[engine].url+encodeURIComponent(word);
                     that.open_url(href);
                 }else{
                     func.loading_hide();
-                    browser_search_engine_show = "show";
                 }
             }
         },
