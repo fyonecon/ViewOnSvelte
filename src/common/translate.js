@@ -261,7 +261,7 @@ const lang_dict = {
     },
     search_enter_input: {
         zh: "🔍&nbsp;搜 索",
-        en: "🔍Search",
+        en: "Search",
     },
 
     // =========
