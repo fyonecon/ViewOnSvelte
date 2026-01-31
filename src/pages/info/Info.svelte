@@ -282,7 +282,6 @@
         float: left;
         margin-right: 10px;
         opacity: 0.8;
-        font-weight: 600;
     }
     .info-div-content-li-res{
         opacity: 0.6;

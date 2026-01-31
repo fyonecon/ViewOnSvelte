@@ -12,6 +12,7 @@
     import {watch_lang_data} from "../stores/watch_lang.store.svelte";
     import {watch_theme_model_data} from "../stores/watch_theme_model.store.svelte";
     import {browser} from "$app/environment";
+    import Tab from "../parts/Tab.svelte";
 
 
     /** @type {{children: import('svelte').Snippet}} */
@@ -143,6 +144,7 @@
 <div class="app {page_display} select-none" data-theme_model="{theme_model}" data-language_index="{lang_index}">
     <!-- 内容 -->
 	<main class="main {page_display} ">{@render children()}</main>
+    <Tab />
 </div>
 
 <div class="alert select-none">
