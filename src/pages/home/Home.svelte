@@ -387,7 +387,7 @@
     }
 
     .input-border{
-        border: 1px solid var(--color-blue-800);
+        border: 2px solid var(--color-blue-800);
         border-radius: 30px;
         opacity: 0.9;
     }
@@ -408,11 +408,11 @@
         outline: none;
     }
     .search-div-input-input{
-        width: calc(100% - 120px - 1px);
+        width: calc(100% - 120px - 0px);
         height: 44px;
         float: left;
         padding: 0 10px;
-        margin-left: 1px;
+        margin-left: 0px;
         outline: none;
      }
     .search-div-input-arrow{
