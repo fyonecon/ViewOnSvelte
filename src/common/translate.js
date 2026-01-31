@@ -199,12 +199,12 @@ const lang_dict = {
         en: "Search",
     },
     input_placeholder_find: {
-        zh: "输入查找",
+        zh: "输入查找...",
         en: "Find...",
     },
     input_placeholder_search: {
-        zh: "输入关键词",
-        en: "Search keyword...",
+        zh: "输入关键词...",
+        en: "Search keywords...",
     },
     remove: {
         zh: "移除",
@@ -256,8 +256,8 @@ const lang_dict = {
         en: "Rewrite",
     },
     search_enter_input: {
-        zh: "搜 索",
-        en: "Search",
+        zh: "🔍&nbsp;搜 索",
+        en: "🔍Search",
     },
 
     // =========

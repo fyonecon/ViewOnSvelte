@@ -116,11 +116,11 @@
                 for (let i=0; i<array.length; i++){
                     let the_value = array[i];
                     if (the_value.trim()){
-                        search_history_array.push(the_value);
+                        search_history_array.unshift(the_value);
                     }
                 }
             }else if (value.length>0 && value.indexOf(search_history_split) === -1){
-                search_history_array.push(value);
+                search_history_array.unshift(value);
             }
         },
         input_history: function(_value=""){ // 更新与显示
@@ -277,11 +277,11 @@
     <div class="search-div-btn font-text">
         <button class="search-div-btn-btn break-ellipsis btn-border font-red" onclick={()=>def.open_dialog()}>{func.get_translate("search_del_history")}</button>
         <button class="search-div-btn-btn break-ellipsis btn-border" onclick={()=>def.input_clear_write()}>{func.get_translate("search_clear_input")}</button>
-        <button class="search-div-btn-btn break-ellipsis btn-border" onclick={()=>def.input_run_search()}>🔍&nbsp;{func.get_translate("search_enter_input")}</button>
+        <button class="search-div-btn-btn break-ellipsis btn-border" onclick={()=>def.input_run_search()}>{@html func.get_translate("search_enter_input")}</button>
     </div>
     <div class="search-div-history font-text font-blue scroll-y-style">
-        {#each search_history_array as history_value, index}
-            <button class="history-btn break break-ellipsis" onclick={()=>def.input_auto_write(history_value)} title="{history_value}">{"#"+(index+1)+" "+history_value + " "}</button>
+        {#each search_history_array as history_value}
+            <button class="history-btn break break-ellipsis" onclick={()=>def.input_auto_write(history_value)} title="{history_value}">{"# "+history_value + " "}</button>
         {/each}
     </div>
 </div>
@@ -366,7 +366,7 @@
     }
     .search-div-btn{
         width: calc(100%);
-        max-width: 440px;
+        max-width: 420px;
         margin-right: auto;
         margin-left: auto;
         height: 40px;
@@ -379,7 +379,7 @@
         width: calc(100%);
         margin-right: auto;
         margin-left: auto;
-        padding: 10px 15px;
+        padding: 10px 10px;
         min-height: 60px;
         max-height: 300px;
         clear: both;
@@ -445,7 +445,7 @@
     }
 
     .history-btn{
-        margin: 2px 10px;
+        margin: 2px 15px;
         max-width: 220px;
         overflow: hidden;
         float: left;

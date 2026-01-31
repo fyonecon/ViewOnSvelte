@@ -68,9 +68,10 @@
         check_param: function(){
             let that = this;
             //
-            let word = func.search_href_param("", "word");
-            let engine = func.search_href_param("", "engine");
-            let url_timeout = func.search_href_param("", "url_timeout");
+            let word = func.search_href_param("", "word").trim();
+            let engine = func.search_href_param("", "engine").trim();
+            let url_timeout = func.search_href_param("", "url_timeout").trim();
+            //
             if (url_timeout){
                 func.loading_show();
                 if (func.url_timeout_decode("search", url_timeout)){
