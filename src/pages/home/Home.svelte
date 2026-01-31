@@ -379,7 +379,7 @@
         width: calc(100%);
         margin-right: auto;
         margin-left: auto;
-        padding: 10px 10px;
+        padding: 10px 15px;
         min-height: 60px;
         max-height: 300px;
         clear: both;
@@ -411,8 +411,8 @@
         width: calc(100% - 120px - 0px);
         height: 44px;
         float: left;
-        padding: 0 10px;
-        margin-left: 0px;
+        padding: 0 5px;
+        margin-left: 0;
         outline: none;
      }
     .search-div-input-arrow{
@@ -445,7 +445,7 @@
     }
 
     .history-btn{
-        margin: 2px 15px;
+        margin: 2px 10px;
         max-width: 220px;
         overflow: hidden;
         float: left;
