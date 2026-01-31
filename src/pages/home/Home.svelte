@@ -387,7 +387,7 @@
     }
 
     .input-border{
-        border: 2px solid var(--color-blue-800);
+        border: 1px solid var(--color-blue-800);
         border-radius: 30px;
         opacity: 0.9;
     }
