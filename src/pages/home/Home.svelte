@@ -411,7 +411,7 @@
         width: calc(100% - 120px - 0px);
         height: 44px;
         float: left;
-        padding: 0 5px;
+        padding: 0 8px;
         margin-left: 0;
         outline: none;
      }
@@ -445,7 +445,7 @@
     }
 
     .history-btn{
-        margin: 2px 10px;
+        margin: 2px 12px;
         max-width: 220px;
         overflow: hidden;
         float: left;
