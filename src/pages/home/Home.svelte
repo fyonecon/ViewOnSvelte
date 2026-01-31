@@ -335,6 +335,7 @@
         max-width: 640px;
         padding-bottom: 40px;
         padding-top: 50px;
+        opacity: 0.9;
     }
     @media only screen and (min-width: 200px){
         .search-div{
